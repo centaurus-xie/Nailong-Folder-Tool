@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我是奶龙！我是奶龙！我是奶龙！</title>
+    <HTA:APPLICATION 
+        ID="CreateProjectFolder" 
+        APPLICATIONNAME="CreateProjectFolder" 
+        BORDER="thin" 
+        CAPTION="yes" 
+        SHOWINTASKBAR="no" 
+        SINGLEINSTANCE="yes" 
+        SYSMENU="yes" 
+        WINDOWSTATE="normal"
+        INNERBORDER="yes"
+        SCROLL="no"
+        MAXIMIZEBUTTON="no"
+        MINIMIZEBUTTON="no"
+    >
+    <style>
+        /* 设置背景图片 */
+        body {
+            background-image: url("./nailong.jpg");
+            background-size: 100% 100%;
+            background-repeat: no-repeat; /* 禁止重复 */
+            background-position: bottom; /* 背景图片居中 */
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            color: black; /* 文字颜色，确保与背景对比明显 */
+            display: flex; /* 使用 Flexbox 布局 */
+            flex-direction: column; /* 内容垂直排列 */
+            align-items: center; /* 水平居中 */
+            justify-content: center; /* 垂直居中 */
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        input {
+            width: 90%; /* 增大输入框宽度 */
+            height: 28px; /* 增大输入框高度 */
+            padding: 10px; /* 内边距 */
+            margin-bottom: 15px;
+            font-size: 18px; /* 增大输入框字体 */
+            font-family: "Microsoft YaHei", Arial, sans-serif; /* 输入框也使用微软雅黑 */
+            border: 2px solid #ccc; /* 边框样式 */
+            border-radius: 5px; /* 圆角 */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px; /* 增大按钮字体 */
+            font-family: "Microsoft YaHei", Arial, sans-serif; /* 按钮文字也使用微软雅黑 */
+            cursor: pointer;
+            background-color: #0078D7; /* 按钮背景颜色 */
+            color: white; /* 按钮文字颜色 */
+            border: none; /* 移除边框 */
+            border-radius: 5px; /* 圆角 */
+        }
+        button:hover {
+            background-color: #005bb5; /* 鼠标悬停时的按钮颜色 */
+        }
+        .button-container {
+            margin-top: 10px; /* 按钮与输入框之间的间距 */
+        }
+    </style>
+    <script language="VBScript">
+        ' 在窗口加载时调整大小
+        Sub Window_OnLoad
+            ' 在窗口加载时调整大小并设置默认日期
+            window.resizeTo 600, 850
+
+            ' 获取屏幕宽度和高度
+            Dim screenWidth, screenHeight
+            screenWidth = window.screen.width
+            screenHeight = window.screen.height
+
+            ' 计算窗口的左上角位置以使其居中
+            Dim leftPosition, topPosition
+            leftPosition = (screenWidth - windowWidth) \ 2 - 300
+            topPosition = (screenHeight - windowHeight) \ 2 - 425
+
+            ' 将窗口移动到屏幕中央
+            window.moveTo leftPosition, topPosition
+
+            ' 获取当前日期并格式化为 YYYYMMDD
+            Dim currentDate
+            currentDate = Year(Now) & Right("0" & Month(Now), 2) & Right("0" & Day(Now), 2)
+
+            ' 将当前日期设置为时间输入框的默认值
+            document.getElementById("timeInput").value = currentDate
+        End Sub
+
+        ' 获取当前日期并格式化为 YYYYMMDD
+        Function GetCurrentDate()
+            Dim currentDate
+            currentDate = Year(Now) & Right("0" & Month(Now), 2) & Right("0" & Day(Now), 2)
+            GetCurrentDate = currentDate
+        End Function
+
+        ' 处理用户输入
+        Sub CreateProject
+            Dim timeInput, potName, projectName, projectPath, fso
+
+            ' 获取用户输入
+            timeInput = document.getElementById("timeInput").value
+            potName = document.getElementById("potInput").value
+
+            ' 检查输入是否为空
+            If timeInput = "" Then
+                MsgBox "时间不能为空！", vbExclamation, "错误"
+                Exit Sub
+            End If
+
+            If potName = "" Then
+                MsgBox "锅名不能为空！", vbExclamation, "错误"
+                Exit Sub
+            End If
+
+            ' 创建项目名称
+            projectName = timeInput & "" & potName
+
+            ' 获取当前工作目录
+            Set fso = CreateObject("Scripting.FileSystemObject")
+            projectPath = fso.GetAbsolutePathName(".") & "\" & projectName
+
+            ' 检查文件夹是否已存在
+            If fso.FolderExists(projectPath) Then
+                MsgBox "项目文件夹 '" & projectName & "' 已存在！", vbExclamation, "错误"
+            Else
+                ' 创建项目文件夹及子文件夹
+                fso.CreateFolder projectPath
+                fso.CreateFolder projectPath & "\素材"
+                fso.CreateFolder projectPath & "\工程"
+                fso.CreateFolder projectPath & "\导出"
+                fso.CreateFolder projectPath & "\归档"
+		
+		' 显示成功信息
+                MsgBox "项目文件夹 '" & projectName & "' 及其子文件夹已成功创建！", vbInformation, "完成"
+
+		' 关闭窗口
+                window.close()
+            End If
+        End Sub
+    </script>
+</head>
+<body>
+    <h2>让奶龙来帮你新建一个项目文件夹吧！</h2>
+    <label for="timeInput">请输入时间 (YYYYMMDD)：</label>
+    <input type="text" id="timeInput" value="" placeholder="例如：20231007"><br><br>
+
+    <label for="potInput">请输入锅名：</label>
+    <input type="text" id="potInput" value=""><br><br>
+
+    <button onclick="CreateProject">创建项目文件夹</button>
+</body>
+</html>
